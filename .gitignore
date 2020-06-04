@@ -1,0 +1,6 @@
+# Project exclude paths
+/.gradle/
+/build/
+/neuro-api/build/
+/neuro-example/build/
+/neuro-example/build/classes/java/main/
