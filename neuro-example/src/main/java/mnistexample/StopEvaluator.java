@@ -11,11 +11,11 @@ import java.util.LinkedList;
  *
  * It also keeps a copy of the best neural network seen.
  */
-class StopEvaluator {
+public class StopEvaluator {
 
-    private int windowSize;
+    private final int windowSize;
     private final NeuralNet network;
-    private Double acceptableErrorRate;
+    private final Double acceptableErrorRate;
     private final LinkedList<Double> errorRates;
 
     private String bestNetSoFar;
@@ -34,10 +34,11 @@ class StopEvaluator {
         // Save config of neural network if error rate is lowest we seen
         if (errorRate < lowestErrorRate) {
             lowestErrorRate = errorRate;
-//            bestNetSoFar = network.toJson(true);
+            bestNetSoFar = network.toJson();
         }
 
-        if (acceptableErrorRate != null && lowestErrorRate < acceptableErrorRate) return true;
+        if (acceptableErrorRate != null && lowestErrorRate <= acceptableErrorRate)
+            return true;
 
         // update moving average
         errorRates.addLast(errorRate);
@@ -69,6 +70,9 @@ class StopEvaluator {
     }
 
     private double getAverage(LinkedList<Double> list) {
-        return list.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+        return list.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
     }
 }

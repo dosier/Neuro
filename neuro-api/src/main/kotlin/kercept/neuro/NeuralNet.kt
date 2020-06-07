@@ -1,5 +1,6 @@
 package kercept.neuro
 
+import com.google.gson.GsonBuilder
 import kercept.math.Vector
 import kercept.neuro.function.CostFunction
 import kercept.neuro.layer.InputLayer
@@ -78,12 +79,18 @@ class NeuralNet(
         } while (true)
     }
 
-    @Synchronized fun learn() {
+    @Synchronized
+    fun learn() {
         for(layer in layers){
             if(layer is TrainableLayer && layer.hasPrecedingLayer())
                 layer.update()
         }
     }
+
+    fun toJson() = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+            .toJson(this)!!
 
     class Builder(private val inputSize: Int){
 

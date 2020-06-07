@@ -21,7 +21,7 @@ val random : (Int, Int) -> Initializer = {
     val delta = (max - min).toDouble()
     object : Initializer {
         override fun initWeights(rows: Int, cols: Int, layer: Int) :  Matrix
-                = Matrix(cols, rows) { _, _ -> min + r.nextDouble() * delta}
+                = Matrix(rows, cols) { _, _ -> min + r.nextDouble() * delta}
     }
 }
 
