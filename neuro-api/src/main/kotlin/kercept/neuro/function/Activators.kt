@@ -1,26 +1,53 @@
 package kercept.neuro.function
 
-import kercept.math.Vector
+import kercept.math.FloatVector
 import kotlin.math.exp
+import kotlin.math.pow
 
 
 val sigmoid = Activator(
-        y = {x -> 1.0 / (1.0 + exp(-x))},
-        yd = {x -> x * (1.0 - x)}
+        y = {x -> 1F / (1F + exp(-x))},
+        yd = {x -> x * (1F - x)}
 )
 val relu = Activator(
-        y = {x -> if(x <= 0) 0.0 else x },
-        yd = {x -> if(x <= 0) 0.0 else 1.0}
+        y = {x -> if(x <= 0) 0F else x },
+        yd = {x -> if(x <= 0) 0F else 1F}
 )
 
 val leakyRelu = Activator(
-        y = {x -> if(x <= 0) 0.01 * x else x },
-        yd = {x -> if(x <= 0) 0.01 else 1.0}
+        y = {x -> if(x <= 0) 0.01F * x else x },
+        yd = {x -> if(x <= 0) 0.01F else 1F}
 )
 
+var a = 1F
+
+val elu = object : Activator() {
+    override fun invokeY(vector: FloatVector) {
+        for((i, x) in vector.components.withIndex()){
+            if(x <= 0)
+                vector[i] = fl(x)
+        }
+    }
+
+    private fun fl(x: Float) = a * (Math.E.pow(x.toDouble()).toFloat() - 1F)
+
+    override fun invokeYd(vector: FloatVector): FloatVector {
+        val result = FloatVector(vector.size)
+
+        for((i, x) in vector.components.withIndex()){
+            if(x <= 0)
+                result[i] = fl(x) + a
+            else
+                result[i] = 1F
+        }
+
+        return result
+    }
+}
+
 val softmax = object : Activator() {
-    override fun invokeY(vector: Vector) {
-        var sum = 0.0
+    override fun invokeY(vector: FloatVector) {
+        var sum = 0F
         val max = vector.components.max()!!
         for(comp in vector.components){
             sum += exp(comp - max)
@@ -30,8 +57,8 @@ val softmax = object : Activator() {
         }
     }
 
-    override fun dCdI(out: Vector, dCd0: Vector): Vector {
-        val x: Double = (out * dCd0).sum()
+    override fun dCdI(out: FloatVector, dCd0: FloatVector): FloatVector {
+        val x: Float = (out * dCd0).sum()
         val sub = dCd0 - x
         return out * sub
     }

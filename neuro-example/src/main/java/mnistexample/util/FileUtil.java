@@ -51,11 +51,11 @@ public class FileUtil {
 
 
             for (int i = 0; i < nImages; i++) {
-                double[] img = new double[rows * cols];
+                float[] img = new float[rows * cols];
                 //noinspection ResultOfMethodCallIgnored
                 imageIS.read(data, 0, data.length);
                 for (int d = 0; d < img.length; d++)
-                    img[d] = (data[d] & 255) / 255.0;
+                    img[d] = (data[d] & 255) / 255F;
 
                 images.add(new DigitData(img, labelIS.readByte()));
             }

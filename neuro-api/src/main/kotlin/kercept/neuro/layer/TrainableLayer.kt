@@ -1,43 +1,42 @@
 package kercept.neuro.layer
 
-import kercept.math.Matrix
-import kercept.math.Vector
+import kercept.math.FloatMatrix
+import kercept.math.FloatVector
 import kercept.neuro.Initializer
 import kercept.neuro.empty
 import kercept.neuro.function.Activator
-import kercept.neuro.optimizer.Optimizer
 import kercept.neuro.function.sigmoid
 import kercept.neuro.optimizer.GradientDescent
+import kercept.neuro.optimizer.Optimizer
 
 class TrainableLayer(
         size: Int,
-        biasInitializer: (Int) -> Double = {0.0},
+        biasInitializer: (Int) -> Float = {0F},
         private val weightsInitializer: Initializer = empty,
-        private val l2: Double = 0.0,
+        private val l2: Float = 0F,
         val activator: Activator = sigmoid,
-        private val optimizer: Optimizer = GradientDescent(0.05)
+        private val optimizer: Optimizer = GradientDescent(0.05F)
 ) : Layer(size) {
 
-    lateinit var weights : Matrix
+    lateinit var weights : FloatMatrix
     lateinit var precedingLayer: Layer
 
-    var bias = Vector(size, biasInitializer)
+    var bias = FloatVector(size, biasInitializer)
 
-    @Transient lateinit var deltaWeights : Matrix
+    @Transient lateinit var deltaWeights : FloatMatrix
     @Transient var deltaWeightsAdded = 0
 
-    @Transient var deltaBias = Vector(size)
+    @Transient var deltaBias = FloatVector(size)
     @Transient var deltaBiasAdded = 0
 
     fun createWeights(previousSize: Int, layerIndex: Int){
         weights = weightsInitializer.initWeights(previousSize, size, layerIndex)
-        deltaWeights = Matrix(previousSize, size)
+        deltaWeights = FloatMatrix(previousSize, size)
     }
 
-    override fun evaluate(signal: Vector): Vector {
+    override fun evaluate(signal: FloatVector): FloatVector {
 
-        val newSignal = signal * weights
-        newSignal += (bias)
+        val newSignal = signal.times(weights, bias)
 
         activator.invokeY(newSignal)
 
@@ -46,7 +45,7 @@ class TrainableLayer(
     }
 
     @Synchronized
-    fun addWeightsAndBias(dCdW: Matrix, dCdI: Vector) {
+    fun addWeightsAndBias(dCdW: FloatMatrix, dCdI: FloatVector) {
         deltaWeights.plusAssign(dCdW)
         deltaWeightsAdded++
         deltaBias.plusAssign(dCdI)
@@ -60,21 +59,21 @@ class TrainableLayer(
             if(l2 > 0)
                 weights.map {it - (l2 * it)}
 
-            val averageDW = deltaWeights * (1.0/deltaWeightsAdded)
+            val averageDW = deltaWeights * (1F/deltaWeightsAdded)
 
             optimizer.updateWeights(weights, averageDW)
 
-            deltaWeights.fill(0.0)
+            deltaWeights.fill(0F)
             deltaWeightsAdded = 0
         }
 
         if(deltaBiasAdded > 0){
 
-            val averageBias = deltaBias * (1.0/deltaBiasAdded)
+            val averageBias = deltaBias * (1F/deltaBiasAdded)
 
             optimizer.updateBias(bias, averageBias)
 
-            deltaBias.fill(0.0)
+            deltaBias.fill(0F)
             deltaBiasAdded = 0
         }
     }

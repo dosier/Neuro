@@ -15,14 +15,14 @@ public class StopEvaluator {
 
     private final int windowSize;
     private final NeuralNet network;
-    private final Double acceptableErrorRate;
+    private final Float acceptableErrorRate;
     private final LinkedList<Double> errorRates;
 
     private String bestNetSoFar;
-    private double lowestErrorRate = Double.MAX_VALUE;
-    private double lastErrorAverage = Double.MAX_VALUE;
+    private float lowestErrorRate = Float.MAX_VALUE;
+    private float lastErrorAverage = Float.MAX_VALUE;
 
-    public StopEvaluator(NeuralNet network, int windowSize, Double acceptableErrorRate) {
+    public StopEvaluator(NeuralNet network, int windowSize, Float acceptableErrorRate) {
         this.windowSize = windowSize;
         this.network = network;
         this.acceptableErrorRate = acceptableErrorRate;
@@ -33,7 +33,7 @@ public class StopEvaluator {
     public boolean stop(double errorRate) {
         // Save config of neural network if error rate is lowest we seen
         if (errorRate < lowestErrorRate) {
-            lowestErrorRate = errorRate;
+            lowestErrorRate = (float) errorRate;
             bestNetSoFar = network.toJson();
         }
 
@@ -56,7 +56,7 @@ public class StopEvaluator {
         if (avg > lastErrorAverage) {
             return true;
         } else {
-            lastErrorAverage = avg;
+            lastErrorAverage = (float) avg;
             return false;
         }
     }

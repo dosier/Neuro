@@ -1,11 +1,11 @@
 package neuro.example.mnist
 
-import kercept.math.Vector
+import kercept.math.FloatVector
 
 class DigitEntry(
         val label: Int,
-        val labelVector: Vector,
-        val image: Vector
+        val labelVector: FloatVector,
+        val image: FloatVector
 ) {
 
 }

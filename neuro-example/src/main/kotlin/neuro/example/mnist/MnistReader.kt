@@ -1,6 +1,6 @@
 package neuro.example.mnist
 
-import kercept.math.Vector
+import kercept.math.FloatVector
 import java.io.File
 import java.nio.ByteBuffer
 import kotlin.experimental.and
@@ -46,20 +46,20 @@ class MnistReader {
         }
     }
 
-    fun labelToVector(label: Int) = Vector(10) {
+    fun labelToVector(label: Int) = FloatVector(10) {
         if(it == label)
-            1.0
+            1.0F
         else
-            0.0
+            0.0F
     }
 
-    fun imageToVector(image: Array<IntArray>): Vector {
+    fun imageToVector(image: Array<IntArray>): FloatVector {
 
-        val vector = Vector(28*28)
+        val vector = FloatVector(28*28)
         var i = 0
         for(pixelRow in image){
             for(pixel in pixelRow){
-                vector[i++] = pixel.div(255.0)
+                vector[i++] = pixel.div(255.0).toFloat()
             }
         }
 

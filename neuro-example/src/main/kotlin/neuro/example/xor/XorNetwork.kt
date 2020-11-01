@@ -1,6 +1,6 @@
 package neuro.example.xor
 
-import kercept.math.Vector
+import kercept.math.FloatVector
 import kercept.neuro.NeuralNet
 import kercept.neuro.function.quadraticCost
 import kercept.neuro.function.relu
@@ -29,18 +29,18 @@ const val EPSILON = 0.000001
 fun main() {
 
     val inputOutputPairs = mutableListOf(
-            Vector(0.0, 0.0) to Vector(0.0),
-            Vector(0.0, 1.0) to Vector(1.0),
-            Vector(1.0, 1.0) to Vector(0.0),
-            Vector(1.0, 0.0) to Vector(1.0)
+            FloatVector(0F, 0F) to FloatVector(0F),
+            FloatVector(0F, 1F) to FloatVector(1F),
+            FloatVector(1F, 1F) to FloatVector(0F),
+            FloatVector(1F, 0F) to FloatVector(1F)
     )
 
     val hiddenLayer = TrainableLayer(2,
-            biasInitializer = { Random.nextDouble() },
+            biasInitializer = { Random.nextFloat() },
             weightsInitializer = random.invoke(0, 1),
             activator = sigmoid)
     val outputLayer = TrainableLayer(1,
-            biasInitializer = { Random.nextDouble() },
+            biasInitializer = { Random.nextFloat() },
             weightsInitializer = random.invoke(0, 1),
             activator = relu)
 
@@ -56,7 +56,7 @@ fun main() {
     var errorRateOnTrainDS: Double
     var errorRateOnTestDS: Double
 
-    val evaluator = StopEvaluator(net, 40, 0.0)
+    val evaluator = StopEvaluator(net, 40, 0F)
     var shouldStop = false
 
     val t0 = System.currentTimeMillis()
@@ -86,7 +86,7 @@ fun main() {
  * Run the entire dataset `data` through the network.
  * If `learn` is true the network will learn from the data.
  */
-private fun applyDataToNet(data: List<Pair<Vector, Vector>>, network: NeuralNet, learn: Boolean): Int {
+private fun applyDataToNet(data: List<Pair<FloatVector, FloatVector>>, network: NeuralNet, learn: Boolean): Int {
 
     val correct = AtomicInteger()
 

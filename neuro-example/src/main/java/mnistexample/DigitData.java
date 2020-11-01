@@ -14,7 +14,7 @@ import static java.lang.Math.*;
  */
 public class DigitData {
 
-    private static final double[][] EXPECTED_ARRAY = new double[][]{
+    private static final float[][] EXPECTED_ARRAY = new float[][]{
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
@@ -26,17 +26,17 @@ public class DigitData {
             {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
     };
-    private double[] data;
-    private double[] transformedData;
+    private float[] data;
+    private float[] transformedData;
     private int label;
     private Random rnd = new Random();
 
-    public DigitData(double[] data, int label) {
+    public DigitData(float[] data, int label) {
         this.data = data;
         this.label = label;
     }
 
-    public double[] getData() {
+    public float[] getData() {
         return transformedData != null ? transformedData : data;
     }
 
@@ -44,7 +44,7 @@ public class DigitData {
         return label;
     }
 
-    public double[] getLabelAsArray() {
+    public float[] getLabelAsArray() {
         return EXPECTED_ARRAY[label];
     }
 
@@ -56,7 +56,7 @@ public class DigitData {
                 .append("  (").append(Arrays.toString(getLabelAsArray()))
                 .append("\n").append(line);
         int cnt = 0;
-        double[] srcData = transformedData != null ? transformedData : data;
+        float[] srcData = transformedData != null ? transformedData : data;
         for (int r = 0; r < 28; r++) {
             sb.append("\n|");
             for (int c = 0; c < 28; c++) {
@@ -83,7 +83,7 @@ public class DigitData {
     public void transformDigit() {
 
         try {
-            double[] dst = new double[data.length];
+            float[] dst = new float[data.length];
             boolean potentialOverspill;
             int overspillCounter = 0;
 
@@ -114,11 +114,11 @@ public class DigitData {
                         double xf = rPoint.getX() - xi;
                         double yf = rPoint.getY() - yi;
 
-                        double interpolatedValue =
-                                (1 - xf) * (1 - yf) * pixelValue(xi, yi, data) +
-                                (1 - xf) * yf * pixelValue(xi, yi + 1, data) +
-                                xf * (1 - yf) * pixelValue(xi + 1, yi, data) +
-                                xf * yf * pixelValue(xi + 1, yi + 1, data);
+                        float interpolatedValue =
+                                (float) ((1 - xf) * (1 - yf) * pixelValue(xi, yi, data) +
+                                        (1 - xf) * yf * pixelValue(xi, yi + 1, data) +
+                                        xf * (1 - yf) * pixelValue(xi + 1, yi, data) +
+                                        xf * yf * pixelValue(xi + 1, yi + 1, data));
 
                         if (interpolatedValue > 0 && onBorder(x, y)) {
                             potentialOverspill = true;
@@ -144,7 +144,7 @@ public class DigitData {
         return x == 0 || y == 0 || x == 27 || y == 27;
     }
 
-    private double pixelValue(int x, int y, double[] data) {
+    private double pixelValue(int x, int y, float[] data) {
         return data[min(y * 28 + x, data.length - 1)];
     }
 

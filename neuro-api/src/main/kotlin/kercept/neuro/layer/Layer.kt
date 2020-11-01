@@ -1,10 +1,10 @@
 package kercept.neuro.layer
 
-import kercept.math.Vector
+import kercept.math.FloatVector
 
 abstract class Layer(val size: Int) {
 
-    val out = ThreadLocal<Vector>()
+    val out = ThreadLocal<FloatVector>()
 
-    abstract fun evaluate(signal: Vector): Vector
+    abstract fun evaluate(signal: FloatVector): FloatVector
 }

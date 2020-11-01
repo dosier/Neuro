@@ -1,11 +1,13 @@
 package kercept.neuro
 
 import com.google.gson.GsonBuilder
-import kercept.math.Vector
+import kercept.math.FloatVector
 import kercept.neuro.function.CostFunction
 import kercept.neuro.layer.InputLayer
 import kercept.neuro.layer.Layer
 import kercept.neuro.layer.TrainableLayer
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NeuralNet(
     private val layers: List<Layer>,
@@ -32,7 +34,7 @@ class NeuralNet(
         }
     }
 
-    fun evaluate(input: Vector): Vector {
+    fun evaluate(input: FloatVector): FloatVector {
 
         var signal = input
 
@@ -42,7 +44,7 @@ class NeuralNet(
         return signal
     }
 
-    fun evaluate(input: Vector, expected: Vector): Pair<Vector, Double> {
+    fun evaluate(input: FloatVector, expected: FloatVector): Pair<FloatVector, Float> {
 
         val signal = evaluate(input)
 
@@ -53,7 +55,7 @@ class NeuralNet(
         return Pair(signal, cost)
     }
 
-    private fun learnFrom(expected: Vector) {
+    private fun learnFrom(expected: FloatVector) {
 
         var layer = layers.last()
         var dCd0 = costFunction.getDerivative(expected, layer.out.get())
@@ -120,6 +122,8 @@ class NeuralNet(
     }
 
     companion object {
+
+        lateinit var random : Random
 
         fun builder(size: Int) = Builder(size)
     }

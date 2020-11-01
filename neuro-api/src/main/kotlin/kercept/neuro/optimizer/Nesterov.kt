@@ -1,20 +1,20 @@
 package kercept.neuro.optimizer
 
-import kercept.math.Matrix
-import kercept.math.Vector
+import kercept.math.FloatMatrix
+import kercept.math.FloatVector
 
 class Nesterov(
-        private val learningRate: Double,
-        private val momentum: Double = 0.9
+        private val learningRate: Float,
+        private val momentum: Float = 0.9F
 ) : Optimizer{
 
-    private lateinit var lastDeltaWeights: Matrix
-    private lateinit var lastDeltaBias: Vector
+    private lateinit var lastDeltaWeights: FloatMatrix
+    private lateinit var lastDeltaBias: FloatVector
 
-    override fun updateWeights(weights: Matrix, dCdW: Matrix) {
+    override fun updateWeights(weights: FloatMatrix, dCdW: FloatMatrix) {
 
         if(!this::lastDeltaWeights.isInitialized)
-            lastDeltaWeights = Matrix(dCdW.rows, dCdW.cols)
+            lastDeltaWeights = FloatMatrix(dCdW.rows, dCdW.cols)
 
         val newLastDeltaWeight = (lastDeltaWeights * momentum) - (dCdW * learningRate)
 
@@ -23,10 +23,10 @@ class Nesterov(
         lastDeltaWeights = newLastDeltaWeight
     }
 
-    override fun updateBias(bias: Vector, dCdB: Vector) {
+    override fun updateBias(bias: FloatVector, dCdB: FloatVector) {
 
         if(!this::lastDeltaBias.isInitialized)
-            lastDeltaBias = Vector(dCdB.size)
+            lastDeltaBias = FloatVector(dCdB.size)
 
         val newLastDeltaBias = (lastDeltaBias * momentum) - (dCdB * learningRate)
 

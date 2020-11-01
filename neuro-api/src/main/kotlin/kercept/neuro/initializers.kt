@@ -1,33 +1,31 @@
 package kercept.neuro
 
-import kercept.math.Matrix
+import kercept.math.FloatMatrix
 import java.util.*
 import kotlin.math.sqrt
 
 interface Initializer {
-    fun initWeights(rows: Int, cols: Int, layer: Int) : Matrix
+    fun initWeights(rows: Int, cols: Int, layer: Int) : FloatMatrix
 }
 
-var r = Random()
-
 val empty : Initializer = object : Initializer {
-    override fun initWeights(rows: Int, cols: Int, layer: Int): Matrix {
-        return  Matrix(rows, cols)
+    override fun initWeights(rows: Int, cols: Int, layer: Int): FloatMatrix {
+        return  FloatMatrix(rows, cols)
     }
 }
 
 val random : (Int, Int) -> Initializer = {
     min, max ->
-    val delta = (max - min).toDouble()
+    val delta = (max - min).toFloat()
     object : Initializer {
-        override fun initWeights(rows: Int, cols: Int, layer: Int) :  Matrix
-                = Matrix(rows, cols) { _, _ -> min + r.nextDouble() * delta}
+        override fun initWeights(rows: Int, cols: Int, layer: Int) :  FloatMatrix
+                = FloatMatrix(rows, cols) { _, _ -> min + NeuralNet.random.nextFloat() * delta}
     }
 }
 
 val xavierNormal : Initializer = object : Initializer {
-    override fun initWeights(rows: Int, cols: Int, layer: Int) : Matrix {
+    override fun initWeights(rows: Int, cols: Int, layer: Int) : FloatMatrix {
         val factor = sqrt(2.0 / (cols + rows))
-        return  Matrix(rows, cols) { _, _ -> r.nextGaussian() * factor}
+        return  FloatMatrix(rows, cols) { _, _ -> (NeuralNet.random.nextGaussian() * factor).toFloat() }
     }
 }

@@ -1,11 +1,11 @@
 package kercept.neuro.optimizer
 
-import kercept.math.Matrix
-import kercept.math.Vector
+import kercept.math.FloatMatrix
+import kercept.math.FloatVector
 
 interface Optimizer {
 
-    fun updateWeights(weights: Matrix, dCdW: Matrix)
+    fun updateWeights(weights: FloatMatrix, dCdW: FloatMatrix)
 
-    fun updateBias(bias: Vector, dCdB: Vector)
+    fun updateBias(bias: FloatVector, dCdB: FloatVector)
 }

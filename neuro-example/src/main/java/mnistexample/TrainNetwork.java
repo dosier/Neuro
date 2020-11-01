@@ -1,8 +1,7 @@
 package mnistexample;
 
-import kercept.math.Vector;
+import kercept.math.FloatVector;
 import kercept.neuro.NeuralNet;
-import kercept.neuro.layer.TrainableLayer;
 import mnistexample.util.FileUtil;
 
 import java.io.BufferedWriter;
@@ -23,22 +22,23 @@ import static java.util.Collections.unmodifiableList;
 @SuppressWarnings("Duplicates")
 public class TrainNetwork {
 
-    private static Logger log = Logger.getLogger(TrainNetwork.class.getSimpleName());
+    private static final Logger log = Logger.getLogger(TrainNetwork.class.getSimpleName());
 
-    private static int BATCH_SIZE = 32;
+    private static final int BATCH_COUNT = 16;
 
+    public static int seed = 942457;
+    public static Random random = new Random(seed);
 
     public static void main(String[] args) throws IOException {
-//        int seed = 942457;
-//        setRnd(new Random(seed));
 
         List<DigitData> trainData = FileUtil.loadImageData("train");
         List<DigitData> testData = FileUtil.loadImageData("t10k");
 
-//        for (DigitData d : trainData) {
-//            d.setRandom(new Random(seed++));
-//        }
+        for (DigitData d : trainData) {
+            d.setRandom(new Random(seed++));
+        }
 
+        NeuralNet.random = random;
         NeuralNet network = new MnistNetBuilder().create();
 
         network.initWeights();
@@ -47,13 +47,13 @@ public class TrainNetwork {
         double errorRateOnTrainDS;
         double errorRateOnTestDS;
 
-        StopEvaluator evaluator = new StopEvaluator(network, 40, null);
+        StopEvaluator evaluator = new StopEvaluator(network, 40, 1.7F);
         boolean shouldStop = false;
 
         long t0 = currentTimeMillis();
         do {
             epoch++;
-            shuffle(trainData);
+            shuffle(trainData, random);
 
             int correctTrainDS = applyDataToNet(trainData, network, true);
             errorRateOnTrainDS = 100 - (100.0 * correctTrainDS / trainData.size());
@@ -84,12 +84,12 @@ public class TrainNetwork {
     private static int applyDataToNet(List<DigitData> data, NeuralNet network, boolean learn) {
         final AtomicInteger correct = new AtomicInteger();
 
-        for (int i = 0; i <= data.size() / BATCH_SIZE; i++) {
+        for (int i = 0; i <= data.size() / BATCH_COUNT; i++) {
 
             getBatch(i, data).parallelStream().forEach(img -> {
-                Vector input = new Vector(img.getData());
-                Vector result = learn ?
-                        network.evaluate(input, new Vector(img.getLabelAsArray())).getFirst() :
+                FloatVector input = new FloatVector(img.getData());
+                FloatVector result = learn ?
+                        network.evaluate(input, new FloatVector(img.getLabelAsArray())).getFirst() :
                         network.evaluate(input);
 
                 if (result.indexOfMax() == img.getLabel())
@@ -107,8 +107,8 @@ public class TrainNetwork {
      * Cuts out batch i from dataset data.
      */
     private static List<DigitData> getBatch(int i, List<DigitData> data) {
-        int fromIx = i * BATCH_SIZE;
-        int toIx = Math.min(data.size(), (i + 1) * BATCH_SIZE);
+        int fromIx = i * BATCH_COUNT;
+        int toIx = Math.min(data.size(), (i + 1) * BATCH_COUNT);
         return unmodifiableList(data.subList(fromIx, toIx));
     }
 

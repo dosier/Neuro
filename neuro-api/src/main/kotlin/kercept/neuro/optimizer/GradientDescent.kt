@@ -1,15 +1,15 @@
 package kercept.neuro.optimizer
 
-import kercept.math.Matrix
-import kercept.math.Vector
+import kercept.math.FloatMatrix
+import kercept.math.FloatVector
 
-class GradientDescent(private val learningRate: Double = 0.1) : Optimizer {
+class GradientDescent(private val learningRate : Float = 0F) : Optimizer {
 
-    override fun updateWeights(weights: Matrix, dCdW: Matrix) {
+    override fun updateWeights(weights: FloatMatrix, dCdW: FloatMatrix) {
         weights -= (dCdW * learningRate)
     }
 
-    override fun updateBias(bias: Vector, dCdB: Vector) {
+    override fun updateBias(bias: FloatVector, dCdB: FloatVector) {
         bias -= (dCdB * learningRate)
     }
 }

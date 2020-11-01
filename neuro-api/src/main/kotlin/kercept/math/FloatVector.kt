@@ -4,16 +4,16 @@ import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Vector(vararg val components: Double) {
+class FloatVector(vararg val components: Float) {
 
-    constructor(size: Int) : this(*DoubleArray(size))
+    constructor(size: Int) : this(*FloatArray(size))
 
-    constructor(size: Int, function: (Int) -> Double) : this(size) {
+    constructor(size: Int, function: (Int) -> Float) : this(size) {
         for(i in 0 until size)
             components[i] = function.invoke(i)
     }
 
-    constructor(ints: IntArray) : this(ints.size, {ints[it].toDouble()})
+    constructor(ints: IntArray) : this(ints.size, {ints[it].toFloat()})
 
     val size = components.size
 
@@ -24,16 +24,16 @@ class Vector(vararg val components: Double) {
         println()
     }
 
-    fun apply(function: (Double) -> Double): Vector {
-        val C = Vector(size)
+    fun apply(function: (Float) -> Float): FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = function.invoke(this[i])
         }
         return C
     }
 
-    fun pow(n: Int) : Vector {
-        val C = Vector(size)
+    fun pow(n: Int) : FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = this[i].pow(n)
         }
@@ -42,11 +42,11 @@ class Vector(vararg val components: Double) {
 
     fun sum() = components.sum()
 
-    fun elementProduct(other: Vector) : Vector {
+    fun elementProduct(other: FloatVector) : FloatVector {
         if(other.size != size)
             throw IncorrectDimensions()
 
-        val result = Vector(other.size)
+        val result = FloatVector(other.size)
 
         for (i in components.indices)
             result[i] = this[i] * other[i]
@@ -54,8 +54,8 @@ class Vector(vararg val components: Double) {
         return result
     }
 
-    fun outerProduct(u: Vector): Matrix {
-        val mat = Matrix(u.size, size)
+    fun outerProduct(u: FloatVector): FloatMatrix {
+        val mat = FloatMatrix(u.size, size)
 
         for(i in 0 until size) {
             for(j in 0 until u.size){
@@ -65,58 +65,74 @@ class Vector(vararg val components: Double) {
         return mat
     }
 
-    fun fill(d: Double) { Arrays.fill(components, d) }
+    fun fill(d: Float) { Arrays.fill(components, d) }
 
     fun magnitude() = sqrt(this dot this)
 
     operator fun get(i: Int) = components[i]
 
-    operator fun set(i: Int, value: Double) {
+    operator fun set(i: Int, value: Float) {
         components[i] = value
     }
 
-    operator fun plus(exp: Vector): Vector {
-        val C = Vector(size)
+    operator fun plus(exp: FloatVector): FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = this[i] + exp[i]
         }
         return C
     }
 
-    operator fun plusAssign(other: Vector) {
+    operator fun plusAssign(other: FloatVector) {
         if(other.size != size)
             throw IncorrectDimensions()
         for(i in 0 until  size)
             this[i] += other[i]
     }
 
-    operator fun minus(exp: Vector): Vector {
-        val C = Vector(size)
+    operator fun minus(exp: FloatVector): FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = this[i] - exp[i]
         }
         return C
     }
 
-    operator fun minusAssign(other: Vector){
+    operator fun minusAssign(other: FloatVector){
         for(i in 0 until size){
             this[i] -= other[i]
         }
     }
 
-    operator fun minus(x: Double): Vector {
-        val C = Vector(size)
+    operator fun minus(x: Float): FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = this[i] - x
         }
         return C
     }
 
-    operator fun times(w: Matrix): Vector {
+    fun times(w: FloatMatrix, base: FloatVector): FloatVector {
         if (size != w.rows)
             throw IncorrectDimensions()
 
-        val result = Vector(w.cols)
+        val result = FloatVector(w.cols)
+
+        for (col in 0 until w.cols) {
+            var value = base[col]
+            for (row in 0 until w.rows) {
+                value += (w.get(row, col) * this[row])
+            }
+            result[col] = value
+        }
+        return result
+    }
+
+    operator fun times(w: FloatMatrix): FloatVector {
+        if (size != w.rows)
+            throw IncorrectDimensions()
+
+        val result = FloatVector(w.cols)
 
         for (col in 0 until w.cols) {
             for (row in 0 until w.rows) {
@@ -126,24 +142,24 @@ class Vector(vararg val components: Double) {
         return result
     }
 
-    operator fun times(other: Vector): Vector {
-        val C = Vector(size)
+    operator fun times(other: FloatVector): FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = this[i] * other[i]
         }
         return C
     }
 
-    operator fun times(scalar: Double): Vector {
-        val C = Vector(size)
+    operator fun times(scalar: Float): FloatVector {
+        val C = FloatVector(size)
         for(i in 0 until size){
             C[i] = this[i] * scalar
         }
         return C
     }
 
-    infix fun dot(other: Vector): Double {
-        var product = 0.0
+    infix fun dot(other: FloatVector): Float {
+        var product = 0F
         for(i in 0 until size){
             product += (this[i] * other[i])
         }
@@ -154,7 +170,7 @@ class Vector(vararg val components: Double) {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Vector
+        other as FloatVector
 
         if (!components.contentEquals(other.components)) return false
         if (size != other.size) return false
@@ -185,5 +201,5 @@ class Vector(vararg val components: Double) {
         return largestIndex
     }
 
-    fun copy() = Vector(*components.copyOf())
+    fun copy() = FloatVector(*components.copyOf())
 }

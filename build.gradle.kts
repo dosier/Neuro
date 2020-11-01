@@ -16,6 +16,9 @@ subprojects {
     }
 
     dependencies {
+        implementation("com.aparapi:aparapi:2.0.0")
+        implementation("org.jblas:jblas:1.2.4")
+        implementation("org.jocl:jocl:2.0.2")
         implementation(kotlin("stdlib-jdk8"))
         "testImplementation"("junit:junit:4.12")
     }
