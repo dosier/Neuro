@@ -13,9 +13,11 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven("https://dl.bintray.com/kotlin/kotlin-datascience")
     }
 
     dependencies {
+        implementation("org.jetbrains:kotlin-numpy:0.1.5")
         implementation("com.aparapi:aparapi:2.0.0")
         implementation("org.jblas:jblas:1.2.4")
         implementation("org.jocl:jocl:2.0.2")
